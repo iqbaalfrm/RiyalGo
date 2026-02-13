@@ -139,11 +139,14 @@
 
             <!-- TokoCrypto Card -->
             <div class="bg-white/5 border p-2 flex flex-col relative overflow-hidden group h-fit w-full">
-                <h3 class="text-warning-gold font-bold uppercase tracking-tighter text-base">KURS TOKOCRYPTO NET</h3>
-                <p id="val-tko-raw" class="text-2xl font-bold text-white tabular-nums mt-0.5">0.00</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="bg-warning-gold/20 text-warning-gold text-base px-1 font-bold">PAJAK AKTIF</span>
-                    <span id="val-tko-net" class="text-base text-white/50">+ Biaya 0.2%: Rp 0.00</span>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-warning-gold font-bold uppercase tracking-tighter text-base">KURS TOKOCRYPTO NET
+                    </h3>
+                    <span class="bg-warning-gold/20 text-warning-gold text-xs px-1 font-bold">PAJAK 0.2%</span>
+                </div>
+                <div class="flex items-baseline justify-between mt-0.5">
+                    <p id="val-tko-raw" class="text-2xl font-bold text-white tabular-nums">0.00</p>
+                    <span id="val-tko-net" class="text-sm text-white/50">NET: Rp 0.00</span>
                 </div>
             </div>
 
@@ -356,7 +359,7 @@
                 document.getElementById('val-google-sar').textContent = fmt(d.google_sar);
                 document.getElementById('val-xe-sar').textContent = fmt(d.xe_sar);
                 document.getElementById('val-tko-raw').textContent = fmt(d.tko_raw);
-                document.getElementById('val-tko-net').textContent = `+ Biaya 0.2%: Rp ${fmt(d.tko_net)}`;
+                document.getElementById('val-tko-net').textContent = `NET: Rp ${fmt(d.tko_net)}`;
 
                 // Margin indicator
                 if (d.google_sar && d.tko_net) {

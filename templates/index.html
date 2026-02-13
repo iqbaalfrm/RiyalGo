@@ -288,6 +288,15 @@
                     <h2 class="font-bold text-neon-green uppercase tracking-widest text-center text-base">SIMULASI
                         PROFIT (ESTIMASI BERSIH)</h2>
                 </div>
+                <div class="p-2 border-b border-white/10 flex items-center justify-between bg-white/5">
+                    <label class="text-white/60 text-sm">RATE DASAR (X):</label>
+                    <div class="flex items-center gap-1">
+                        <input id="sim-rate-x" type="number" step="0.01" value="3.78" 
+                            class="bg-black border border-white/20 text-white text-right w-20 px-2 py-0.5 focus:border-neon-green outline-none text-sm font-inconsolata font-bold"
+                            onchange="syncData()"> <!-- Recalc on change -->
+                        <span class="text-white/40 text-xs">SAR/USDT</span>
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-base border-collapse">
                         <thead>

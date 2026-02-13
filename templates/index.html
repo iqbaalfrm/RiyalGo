@@ -112,7 +112,7 @@
     <!-- END: TopBar -->
 
     <!-- BEGIN: MainContent -->
-    <main class="flex-grow p-3 grid grid-cols-12 gap-3 overflow-hidden" data-purpose="dashboard-grid">
+    <main class="flex-grow p-3 grid grid-cols-12 gap-3 overflow-y-auto lg:overflow-hidden" data-purpose="dashboard-grid">
 
         <!-- BEGIN: Column 1 - Kurs Displays -->
         <section class="col-span-12 lg:col-span-3 flex flex-col gap-2 items-start overflow-y-auto"
@@ -200,18 +200,18 @@
         <!-- END: Column 1 -->
 
         <!-- BEGIN: Columns 2 & 3 - P2P Tables -->
-        <section class="col-span-12 lg:col-span-6 grid grid-cols-2 gap-3 h-full" data-purpose="p2p-tables">
+        <section class="col-span-12 lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-3 h-full" data-purpose="p2p-tables">
             <!-- Indonesia Table -->
             <div class="bg-white/5 border border-white/10 flex flex-col">
                 <div class="p-2 bg-white/5 border-b border-white/10">
                     <h2 class="font-bold text-cyber-blue uppercase tracking-widest text-center">P2P INDONESIA (IDR)</h2>
-                    <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-white/10 text-base">
-                        <div><span class="text-white/40">TOKOCRYPTO:</span> <span id="sub-toko"
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 mt-2 pt-2 border-t border-white/10 text-sm whitespace-nowrap">
+                        <div><span class="text-white/40">TKC:</span> <span id="sub-toko"
                                 class="text-white">--</span>
                         </div>
-                        <div><span class="text-white/40">INDODAX:</span> <span id="sub-indodax"
+                        <div><span class="text-white/40">IDX:</span> <span id="sub-indodax"
                                 class="text-white">--</span></div>
-                        <div><span class="text-white/40">PINTU:</span> <span id="sub-pintu" class="text-white">--</span>
+                        <div><span class="text-white/40">PTU:</span> <span id="sub-pintu" class="text-white">--</span>
                         </div>
                         <div><span class="text-white/40">OSL:</span> <span id="sub-osl" class="text-white">--</span>
                         </div>

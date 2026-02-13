@@ -291,7 +291,7 @@
                 </div>
                 <div class="flex-grow p-1 flex flex-col gap-2 min-h-0">
                     <div class="border border-white/5 flex-1 min-h-0">
-                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-neon-green">SELLER QUOTES (LIST A)</div>
+                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-neon-green">SELLER QUOTES</div>
                         <div class="overflow-y-auto max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-indo-buy" class="text-white/60"></tbody>
@@ -299,7 +299,7 @@
                         </div>
                     </div>
                     <div class="border border-white/5 flex-1 min-h-0">
-                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-cyber-blue">SELLER QUOTES (LIST B)</div>
+                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-cyber-blue">SELLER QUOTES</div>
                         <div class="overflow-y-auto max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-indo-sell" class="text-white/60"></tbody>
@@ -320,7 +320,7 @@
                 </div>
                 <div class="flex-grow p-1 flex flex-col gap-2 min-h-0">
                     <div class="border border-white/5 flex-1 min-h-0">
-                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-neon-green">SELLER QUOTES (LIST A)</div>
+                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-neon-green">SELLER QUOTES</div>
                         <div class="overflow-y-auto max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-saudi-buy" class="text-white/60"></tbody>
@@ -328,7 +328,7 @@
                         </div>
                     </div>
                     <div class="border border-white/5 flex-1 min-h-0">
-                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-cyber-blue">SELLER QUOTES (LIST B)</div>
+                        <div class="bg-white/5 text-base px-2 py-1 font-bold text-cyber-blue">SELLER QUOTES</div>
                         <div class="overflow-y-auto max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-saudi-sell" class="text-white/60"></tbody>
@@ -415,12 +415,12 @@
             
             // Mobile: Time only. Desktop: Time + Date
             if (window.innerWidth < 768) {
-                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} UTC+7`; 
+                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} WIB`; 
             } else {
                             if (window.innerWidth < 768) {
-                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} UTC+7`;
+                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} WIB`;
             } else {
-                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} UTC+7 | ${dd}/${mm}/${yyyy}`;
+                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} WIB | ${dd}/${mm}/${yyyy}`;
             }
             }
 
@@ -485,14 +485,14 @@
                 // Clock info
                 
                 if (window.innerWidth < 768) {
-                    document.getElementById('digital-clock').textContent = `${d.time} UTC+7`;
+                    document.getElementById('digital-clock').textContent = `${d.time} WIB`;
                 } else {
                                 if (window.innerWidth < 768) {
                 // Short time format from sync data usually HH:MM:SS
                 // Try to substring if possible, or just use d.time
-                document.getElementById('digital-clock').textContent = `${d.time} UTC+7`;
+                document.getElementById('digital-clock').textContent = `${d.time} WIB`;
             } else {
-                document.getElementById('digital-clock').textContent = `${d.time} UTC+7 | ${d.date}`;
+                document.getElementById('digital-clock').textContent = `${d.time} WIB | ${d.date}`;
             }
                 }
 
@@ -572,26 +572,31 @@
                 const indoSell = d.p2p_indo_sell && d.p2p_indo_sell.length ? d.p2p_indo_sell[0].price : 0;
                 const saBuy = d.p2p_saudi_buy && d.p2p_saudi_buy.length ? d.p2p_saudi_buy[0].price : 0;
                 const saSell = d.p2p_saudi_sell && d.p2p_saudi_sell.length ? d.p2p_saudi_sell[0].price : 0;
-                const indoSpread = (indoSell && indoBuy) ? (indoSell - indoBuy) : 0;
-                const saSpread = (saSell && saBuy) ? (saSell - saBuy) : 0;
-                if (indoSpread) lastSnapshot.indoSpread = indoSpread;
-                if (saSpread) lastSnapshot.saSpread = saSpread;
+                const indoSpread = (indoSell && indoBuy) ? (indoSell - indoBuy) : null;
+                const saSpread = (saSell && saBuy) ? (saSell - saBuy) : null;
+                if (indoSpread !== null) lastSnapshot.indoSpread = indoSpread;
+                if (saSpread !== null) lastSnapshot.saSpread = saSpread;
 
                 document.getElementById('snap-google').textContent = d.google_sar ? `Rp ${fmt(d.google_sar, 2)}` : '--';
                 document.getElementById('snap-xe').textContent = d.xe_sar ? `Rp ${fmt(d.xe_sar, 2)}` : '--';
                 document.getElementById('snap-tko-net').textContent = d.tko_net ? `Rp ${fmt(d.tko_net, 0)}` : '--';
-                document.getElementById('snap-indo-spread').textContent = (indoSpread || lastSnapshot.indoSpread) ? `Rp ${fmt((indoSpread || lastSnapshot.indoSpread), 2)}` : '--';
-                document.getElementById('snap-saudi-spread').textContent = (saSpread || lastSnapshot.saSpread) ? `Rp ${fmt((saSpread || lastSnapshot.saSpread), 2)}` : '--';
+                const indoSpreadShown = indoSpread !== null ? indoSpread : lastSnapshot.indoSpread;
+                const saSpreadShown = saSpread !== null ? saSpread : lastSnapshot.saSpread;
+                document.getElementById('snap-indo-spread').textContent = indoSpreadShown !== null ? `Rp ${fmt(indoSpreadShown, 2)}` : '--';
+                document.getElementById('snap-saudi-spread').textContent = saSpreadShown !== null ? `Rp ${fmt(saSpreadShown, 2)}` : '--';
 
                 const signalEl = document.getElementById('snap-signal');
                 if (signalEl) {
-                    if (indoSpread > 0 && saSpread > 0) {
+                    if (indoSpread !== null && saSpread !== null && indoSpread > 0 && saSpread > 0) {
                         signalEl.textContent = 'Healthy spread across both markets.';
                         signalEl.className = 'text-sm font-bold text-neon-green';
-                    } else if ((!indoSpread || !saSpread) && (lastSnapshot.indoSpread || lastSnapshot.saSpread)) {
+                    } else if (indoSpread !== null && saSpread !== null && indoSpread === 0 && saSpread === 0) {
+                        signalEl.textContent = 'Seller-only mode: spread fixed at Rp 0.00.';
+                        signalEl.className = 'text-sm font-bold text-cyber-blue';
+                    } else if ((indoSpread === null || saSpread === null) && (lastSnapshot.indoSpread !== null || lastSnapshot.saSpread !== null)) {
                         signalEl.textContent = 'P2P feed delayed. Using last valid snapshot.';
                         signalEl.className = 'text-sm font-bold text-warning-gold';
-                    } else if (!indoSpread || !saSpread) {
+                    } else if (indoSpread === null || saSpread === null) {
                         signalEl.textContent = 'Waiting for complete order book data.';
                         signalEl.className = 'text-sm font-bold text-warning-gold';
                     } else {

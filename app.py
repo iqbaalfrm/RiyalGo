@@ -72,9 +72,22 @@ def get_market_engine():
     # 1b. Kurs XE.com (alternative source)
     xe_sar = _fetch_xe_sar()
 
-    # 2. TokoCrypto / Binance spot
+    # 2. TokoCrypto / Binance spot (with fallback)
     tko_res = _safe_get_json("https://api.binance.me/api/v3/ticker/price?symbol=USDTIDR")
     tko_raw = float(tko_res.get("price", 0.0))
+
+    # Fallback: if Binance.me blocked, try Binance global USDT price via IDR conversion
+    if not tko_raw:
+        try:
+            # Use Binance global BUSD/USDT or alternative
+            binance_global = _safe_get_json("https://api.binance.com/api/v3/ticker/price?symbol=USDTBIDR")
+            tko_raw = float(binance_global.get("price", 0.0))
+        except Exception:
+            pass
+
+    # Fallback 2: use Indodax price if still 0
+    if not tko_raw:
+        tko_raw = _fetch_indodax()
 
     # 2b. INDODAX spot
     indodax_raw = _fetch_indodax()

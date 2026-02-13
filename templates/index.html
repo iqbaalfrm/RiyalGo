@@ -416,15 +416,29 @@
                 renderP2PTable(d.p2p_saudi_buy, 'table-p2p-saudi-buy', true, 'text-neon-green');
                 renderP2PTable(d.p2p_saudi_sell, 'table-p2p-saudi-sell', true, 'text-warning-gold');
 
-                // Profit Simulation Table
+                // Profit Simulation Table (Local Calc)
+                const rateX = parseFloat(document.getElementById('sim-rate-x').value) || 3.78;
                 let hP = '';
-                d.profit_sim.forEach(s => {
-                    const color = s.idr >= 0 ? 'text-neon-green' : 'text-red-500';
-                    hP += `<tr class="zebra-row border-b border-white/5">
-          <td class="p-2 font-mono">${s.sar}</td>
-          <td class="p-2 text-right font-bold ${color}">Rp ${Number(s.idr).toLocaleString('id-ID')}</td>
-          <td class="p-2 text-right font-bold ${color}">${s.roi.toFixed(2)}%</td>
-        </tr>`;
+                [20000, 50000, 100000, 200000, 500000].forEach(val => {
+                    // Logic:
+                    // 1. Terima dari Buyer (IDR) = Modal SAR * Google Rate
+                    // 2. Biaya Beli USDT (IDR) = (Modal SAR / Rate X) * TokoNet
+                    // Profit = Terima - Biaya
+                    
+                    const terimaIDR = val * d.google_sar;
+                    const butuhUSDT = val / rateX;
+                    const biayaIDR = butuhUSDT * (d.tko_net || d.tko_raw); // Fallback to raw if net undefined
+                    
+                    const profit = terimaIDR - biayaIDR;
+                    const roi = (profit / biayaIDR) * 100;
+                    
+                    const color = profit >= 0 ? 'text-neon-green' : 'text-red-500';
+                    
+                    hP += `<tr class="zebra-row border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td class="p-2 font-mono text-white">${Number(val).toLocaleString('id-ID')}</td>
+                      <td class="p-2 text-right font-bold ${color}">Rp ${Number(profit).toLocaleString('id-ID', {maximumFractionDigits: 0})}</td>
+                      <td class="p-2 text-right font-bold ${color}">${roi.toFixed(2)}%</td>
+                    </tr>`;
                 });
                 document.getElementById('table-profit-sim').innerHTML = hP;
 

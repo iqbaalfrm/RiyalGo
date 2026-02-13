@@ -80,16 +80,16 @@
 <body class="h-screen flex flex-col overflow-hidden text-sm">
 
     <!-- BEGIN: TopBar -->
-    <header class="h-8 bg-black border-b border-white/10 flex items-center justify-between px-4 shrink-0"
+    <header class="h-8 bg-black overflow-x-auto no-scrollbar border-b border-white/10 flex items-center justify-between px-4 shrink-0"
         data-purpose="main-header">
         <div class="flex items-center gap-6">
             <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></span>
                 <span class="font-bold tracking-widest text-cyber-blue">KODOKRIYAL v2.1.0</span>
             </div>
-            <div class="hidden md:flex items-center gap-4 text-white/50 border-l border-white/10 pl-4">
-                <span>STATUS: <span id="system-status" class="text-neon-green">SISTEM AKTIF</span></span>
-                <span>KONEKSI BINANCE: <span id="binance-status" class="text-neon-green">STABLE</span></span>
+            <div class="flex items-center gap-2 md:gap-4 text-white/50 border-l border-white/10 pl-2 md:pl-4 text-[9px] md:text-xs whitespace-nowrap">
+                <span><span class="hidden sm:inline">STATUS: </span><span id="system-status" class="text-neon-green">SISTEM AKTIF</span></span>
+                <span><span class="hidden sm:inline">BINANCE: </span><span id="binance-status" class="text-neon-green">STABLE</span></span>
             </div>
         </div>
         <div class="flex items-center gap-3 text-white/70">

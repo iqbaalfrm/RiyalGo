@@ -98,12 +98,28 @@ def get_market_engine():
     # 2d. OSL — gunakan TokoCrypto sebagai estimasi (tidak ada public API gratis)
     osl_raw = tko_raw
 
-    # 3. Pajak 0.2222%
-    tko_net = tko_raw * (1 + 0.2222 / 100) if tko_raw else 0.0
+    # 3. Pajak Tokocrypto 0.2222%
+    tko_fee_pct = 0.2222
+    fee_factor = 1 + tko_fee_pct / 100
+    tko_net = tko_raw * fee_factor if tko_raw else 0.0
 
-    # 4. Simulasi Divider (Toko / X)
-    divs = [3.78, 3.785, 3.79, 3.795, 3.8, 3.81, 3.82]
-    sim_div = [{"label": f"Tokocrypto / {d}", "val": round(tko_net / d, 2) if tko_net else 0.0} for d in divs]
+    # 4. Simulasi cek harga sesuai rumus user:
+    #    (Kurs Google - 5..15) / Kurs SAR 3.78..3.82 + fee Tokocrypto
+    divs = [3.78, 3.79, 3.8, 3.81, 3.82]
+    cuts = [5, 10, 15]
+    sim_div = []
+    if google_sar:
+        for cut in cuts:
+            google_cut = google_sar - cut
+            for d in divs:
+                base_val = google_cut / d
+                val_with_fee = base_val * fee_factor
+                sim_div.append({
+                    "label": f"G-{cut} / {d}",
+                    "val": round(val_with_fee, 4),
+                    "google_cut": round(google_cut, 2),
+                    "divisor": d
+                })
 
     # 5. Simulasi Profit Modal (Divider Acuan 3.79)
     base = (tko_net / 3.79) if tko_net else 0.0
@@ -119,10 +135,11 @@ def get_market_engine():
         })
 
     # 6. Fetch P2P Data — BUY and SELL for both IDR and SAR
-    p2p_indo_buy = _fetch_p2p("IDR", "BUY")
     p2p_indo_sell = _fetch_p2p("IDR", "SELL")
-    p2p_saudi_buy = _fetch_p2p("SAR", "BUY")
     p2p_saudi_sell = _fetch_p2p("SAR", "SELL")
+    # User request: seller-only view for all market tables
+    p2p_indo_buy = p2p_indo_sell
+    p2p_saudi_buy = p2p_saudi_sell
 
     tz = pytz.timezone("Asia/Jakarta")
     return {
@@ -132,6 +149,7 @@ def get_market_engine():
         "xe_sar": xe_sar,
         "tko_raw": tko_raw,
         "tko_net": tko_net,
+        "tko_fee_pct": tko_fee_pct,
         "indodax_raw": indodax_raw,
         "pintu_raw": pintu_raw,
         "osl_raw": osl_raw,

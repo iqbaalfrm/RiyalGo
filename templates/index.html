@@ -84,7 +84,7 @@
         data-purpose="main-header">
         <div class="flex items-center gap-2 md:gap-6">
             <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></span>
+                <span class="w-2 h-2 rounded-full bg-neon-green "></span>
                 <span class="font-bold tracking-widest text-cyber-blue text-sm md:text-base">KODOKRIYAL <span class="hidden md:inline text-white/50 text-xs">v2.1.0</span></span>
             </div>
             <div class="hidden md:flex items-center gap-4 text-white/50 border-l border-white/10 pl-4 whitespace-nowrap">
@@ -192,9 +192,7 @@
                     <span class="text-white/40 text-xxs uppercase">Latency</span>
                     <span id="latency-val" class="text-neon-green">--ms</span>
                 </div>
-                <div class="w-full bg-white/5 h-1">
-                    <div id="latency-bar" class="bg-neon-green h-full w-[0%]"></div>
-                </div>
+                <!-- Latency Bar Removed -->
             </div>
         </section>
         <!-- END: Column 1 -->
@@ -434,7 +432,7 @@
                 // Latency
                 document.getElementById('latency-val').textContent = `${latency}ms`;
                 const pct = Math.min(100, Math.max(5, 100 - (latency / 30)));
-                document.getElementById('latency-bar').style.width = `${pct}%`;
+                if(document.getElementById('latency-bar')) document.getElementById('latency-bar').style.width = `${pct}%`;
                 document.getElementById('latency-bar').className = latency < 500 ? 'bg-neon-green h-full' : latency < 2000 ? 'bg-warning-gold h-full' : 'bg-red-500 h-full';
 
                 // XE Update
@@ -546,7 +544,7 @@
             <!-- Header -->
             <div class="flex items-center justify-between p-4 bg-neon-green/10 border-b border-neon-green/20">
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-neon-green "></span>
                     <h3 class="text-neon-green font-bold uppercase tracking-widest text-xs">HASIL KALKULASI ARBITRASE
                     </h3>
                 </div>

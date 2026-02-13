@@ -326,10 +326,10 @@
             
             // Mobile: Time only. Desktop: Time + Date
             if (window.innerWidth < 768) {
-                document.getElementById('digital-clock').textContent = `${h}:${m} WIB`; 
+                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} WIB`; 
             } else {
                             if (window.innerWidth < 768) {
-                document.getElementById('digital-clock').textContent = `${h}:${m} WIB`;
+                document.getElementById('digital-clock').textContent = `${h}:${m}:${s} WIB`;
             } else {
                 document.getElementById('digital-clock').textContent = `${h}:${m}:${s} WIB | ${dd}/${mm}/${yyyy}`;
             }
@@ -371,8 +371,7 @@
                                 if (window.innerWidth < 768) {
                 // Short time format from sync data usually HH:MM:SS
                 // Try to substring if possible, or just use d.time
-                let timeShort = d.time.split(':').slice(0,2).join(':'); 
-                document.getElementById('digital-clock').textContent = `${timeShort} WIB`;
+                document.getElementById('digital-clock').textContent = `${d.time} WIB`;
             } else {
                 document.getElementById('digital-clock').textContent = `${d.time} WIB | ${d.date}`;
             }

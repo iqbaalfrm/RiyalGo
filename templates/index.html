@@ -463,7 +463,10 @@
                 const priceStr = isSAR
                     ? x.price.toFixed(2)
                     : Number(x.price).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                html += `<tr class="zebra-row"><td class="p-1">${x.name}</td><td class="p-1 book-price ${colorClass}">${priceStr}</td></tr>`;
+                const seller = x.url
+                    ? `<a href="${x.url}" target="_blank" rel="noopener noreferrer" class="text-inherit hover:underline">${x.name}</a>`
+                    : `${x.name}`;
+                html += `<tr class="zebra-row"><td class="p-1">${seller}</td><td class="p-1 book-price ${colorClass}">${priceStr}</td></tr>`;
             });
             tbody.innerHTML = html;
         }

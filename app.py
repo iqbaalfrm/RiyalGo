@@ -49,6 +49,10 @@ def _fetch_p2p(fiat, trade_type):
             result.append({
                 "name": x.get("advertiser", {}).get("nickName", "")[:12],
                 "price": _to_float(adv.get("price")),
+                "url": (
+                    f"https://p2p.binance.com/en/trade/{trade_type.lower()}/USDT"
+                    f"?fiat={fiat}&payment=ALL&publisher={x.get('advertiser', {}).get('userNo', '')}"
+                ),
             })
             if len(result) >= 10:
                 break

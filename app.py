@@ -6,7 +6,7 @@ from flask import Flask, render_template, jsonify
 from datetime import datetime
 
 app = Flask(__name__)
-MIN_P2P_VOLUME_IDR = 50_000_000
+MIN_P2P_VOLUME_IDR = 3_000_000
 MIN_P2P_VOLUME_SAR = 12_000
 
 

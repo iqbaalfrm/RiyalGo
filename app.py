@@ -6,8 +6,6 @@ from flask import Flask, render_template, jsonify
 from datetime import datetime
 
 app = Flask(__name__)
-MIN_P2P_VOLUME_IDR = 50_000_000
-MIN_P2P_VOLUME_SAR = 12_000
 
 
 def _safe_get_json(url, timeout=10):
@@ -17,69 +15,21 @@ def _safe_get_json(url, timeout=10):
         return {}
 
 
-def _to_float(value):
-    try:
-        return float(value)
-    except Exception:
-        return 0.0
-
-
-def _build_p2p_link(fiat, trade_type, adv, advertiser):
-    side = trade_type.lower()
-    advertiser_no = (
-        adv.get("advertiserNo")
-        or advertiser.get("advertiserNo")
-        or advertiser.get("userNo")
-    )
-    if advertiser_no:
-        return (
-            f"https://p2p.binance.com/en/trade/{side}/USDT"
-            f"?fiat={fiat}&payment=ALL&publisher={advertiser_no}"
-        )
-    return f"https://p2p.binance.com/en/trade/{side}/USDT?fiat={fiat}&payment=ALL"
-
-
-def _is_verified_seller(advertiser):
-    user_type = str(advertiser.get("userType", "")).lower()
-    user_identity = str(advertiser.get("userIdentity", "")).upper()
-    if user_type == "merchant":
-        return True
-    return "MERCHANT" in user_identity or "VERIFIED" in user_identity
-
-
-def _fetch_p2p(fiat, trade_type, min_volume=0.0, verified_only=True):
+def _fetch_p2p(fiat, trade_type):
     url = "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search"
     payload = {
         "asset": "USDT",
         "fiat": fiat,
         "merchantCheck": True,
         "page": 1,
-        "rows": 30,
+        "rows": 10,
         "tradeType": trade_type,
     }
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.post(url, json=payload, headers=headers, timeout=10).json()
         data = res.get("data", [])
-        result = []
-        for x in data:
-            adv = x.get("adv", {})
-            advertiser = x.get("advertiser", {})
-            max_tx = _to_float(adv.get("dynamicMaxSingleTransAmount")) or _to_float(adv.get("maxSingleTransAmount"))
-            if min_volume and max_tx < min_volume:
-                continue
-            if verified_only and not _is_verified_seller(advertiser):
-                continue
-            result.append({
-                "name": advertiser.get("nickName", "")[:12],
-                "price": _to_float(adv.get("price")),
-                "volume": max_tx,
-                "verified": True,
-                "url": _build_p2p_link(fiat, trade_type, adv, advertiser),
-            })
-            if len(result) >= 10:
-                break
-        return result
+        return [{"name": x["advertiser"]["nickName"][:12], "price": float(x["adv"]["price"])} for x in data]
     except Exception:
         return []
 
@@ -185,10 +135,11 @@ def get_market_engine():
         })
 
     # 6. Fetch P2P Data — BUY and SELL for both IDR and SAR
-    p2p_indo_buy = _fetch_p2p("IDR", "BUY", MIN_P2P_VOLUME_IDR)
-    p2p_indo_sell = _fetch_p2p("IDR", "SELL", MIN_P2P_VOLUME_IDR)
-    p2p_saudi_buy = _fetch_p2p("SAR", "BUY", MIN_P2P_VOLUME_SAR)
-    p2p_saudi_sell = _fetch_p2p("SAR", "SELL", MIN_P2P_VOLUME_SAR)
+    p2p_indo_sell = _fetch_p2p("IDR", "SELL")
+    p2p_saudi_sell = _fetch_p2p("SAR", "SELL")
+    # User request: seller-only view for all market tables
+    p2p_indo_buy = p2p_indo_sell
+    p2p_saudi_buy = p2p_saudi_sell
 
     tz = pytz.timezone("Asia/Jakarta")
     return {

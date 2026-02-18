@@ -6,6 +6,7 @@ from flask import Flask, render_template, jsonify
 from datetime import datetime
 
 app = Flask(__name__)
+MIN_IDR_P2P_LIMIT = 50_000_000
 
 
 def _safe_get_json(url, timeout=10):
@@ -15,6 +16,13 @@ def _safe_get_json(url, timeout=10):
         return {}
 
 
+def _to_float(value):
+    try:
+        return float(value)
+    except Exception:
+        return 0.0
+
+
 def _fetch_p2p(fiat, trade_type):
     url = "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search"
     payload = {
@@ -22,14 +30,29 @@ def _fetch_p2p(fiat, trade_type):
         "fiat": fiat,
         "merchantCheck": True,
         "page": 1,
-        "rows": 10,
+        "rows": 30,
         "tradeType": trade_type,
     }
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.post(url, json=payload, headers=headers, timeout=10).json()
         data = res.get("data", [])
-        return [{"name": x["advertiser"]["nickName"][:12], "price": float(x["adv"]["price"])} for x in data]
+        result = []
+        for x in data:
+            adv = x.get("adv", {})
+            max_limit = _to_float(adv.get("dynamicMaxSingleTransAmount")) or _to_float(adv.get("maxSingleTransAmount"))
+
+            # User request: for IDR tables, show only sellers with max limit above 50 juta.
+            if fiat == "IDR" and max_limit <= MIN_IDR_P2P_LIMIT:
+                continue
+
+            result.append({
+                "name": x.get("advertiser", {}).get("nickName", "")[:12],
+                "price": _to_float(adv.get("price")),
+            })
+            if len(result) >= 10:
+                break
+        return result
     except Exception:
         return []
 

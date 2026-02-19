@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RiyalGo | Business Dashboard</title>
+    <title>RiyalDirect | Business Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' font-size='38' font-family='Arial' fill='%230d9488'%3ER%3C/text%3E%3C/svg%3E">
     <!-- Tailwind CSS v3 with Plugins -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -148,7 +148,7 @@
         <div class="flex items-center gap-2 md:gap-6">
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-neon-green "></span>
-                <span class="font-bold tracking-widest text-cyber-blue text-sm md:text-base">RIYALGO <span class="hidden md:inline text-white/50 text-xs">BUSINESS DESK</span></span>
+                <span class="font-bold tracking-widest text-cyber-blue text-sm md:text-base">RIYALDIRECT <span class="hidden md:inline text-white/50 text-xs">BUSINESS DESK</span></span>
             </div>
             <div class="hidden md:flex items-center gap-4 text-white/50 border-l border-white/10 pl-4 whitespace-nowrap">
                 <span><span class="hidden sm:inline">SYSTEM: </span><span id="system-status" class="text-neon-green">ONLINE</span></span>
@@ -184,7 +184,7 @@
     <main class="h-[calc(100vh-56px)] p-4 md:p-5 grid grid-cols-12 gap-3 overflow-y-auto overflow-x-hidden" data-purpose="dashboard-grid">
 
         <!-- BEGIN: Column 1 - Kurs Displays -->
-        <section class="col-span-12 lg:col-span-3 flex flex-col gap-3 items-start lg:overflow-y-auto"
+        <section class="col-span-12 lg:col-span-3 flex flex-col gap-3 items-start h-full lg:overflow-y-auto"
             data-purpose="kurs-metrics">
             <div class="grid grid-cols-2 gap-2 w-full">
                 <!-- Google SAR Card -->
@@ -231,9 +231,9 @@
             </div>
 
             <!-- Kalkulator Arbitrase -->
-            <div class="bg-white/5 border p-4 flex flex-col relative h-fit w-full">
+            <div class="bg-white/5 border p-4 flex flex-col relative w-full flex-1">
                 <h3 class="text-warning-gold font-bold uppercase tracking-normal mb-2 text-base">TRADE CALCULATOR</h3>
-                <div class="space-y-3">
+                <div class="space-y-3 h-full flex flex-col justify-start">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div class="flex flex-col gap-0.5">
                             <label class="text-base text-white/40 uppercase">Volume SAR</label>

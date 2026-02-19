@@ -137,6 +137,44 @@
         #calc-modal-content .border-slate-200 {
             border-color: #334155 !important;
         }
+
+        @media (max-width: 768px) {
+            main[data-purpose="dashboard-grid"] {
+                padding: 0.75rem !important;
+                gap: 0.75rem !important;
+            }
+
+            header[data-purpose="main-header"] {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+
+            #val-google-sar,
+            #val-xe-sar,
+            #val-tko-raw,
+            #val-p2p-raw {
+                font-size: 1.9rem !important;
+                line-height: 1.05 !important;
+            }
+
+            #calc-sar,
+            #calc-rate-jual {
+                font-size: 1.25rem !important;
+                padding-top: 0.6rem !important;
+                padding-bottom: 0.6rem !important;
+            }
+
+            #calc-market-hint {
+                font-size: 12px !important;
+            }
+
+            #table-p2p-indo-buy,
+            #table-p2p-indo-sell,
+            #table-p2p-saudi-buy,
+            #table-p2p-saudi-sell {
+                font-size: 15px !important;
+            }
+        }
     </style>
 </head>
 
@@ -277,7 +315,7 @@
                 <div class="flex-grow p-1 flex flex-col gap-2 min-h-0">
                     <div class="border border-white/5 flex-1 min-h-0">
                         <div class="bg-white/5 text-base px-2 py-1 font-bold text-neon-green">P2P BUY</div>
-                        <div class="overflow-y-auto max-h-[34vh]">
+                        <div class="overflow-y-auto max-h-[26vh] md:max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-indo-buy" class="text-white/60"></tbody>
                             </table>
@@ -285,7 +323,7 @@
                     </div>
                     <div class="border border-white/5 flex-1 min-h-0">
                         <div class="bg-white/5 text-base px-2 py-1 font-bold text-cyber-blue">P2P SELL</div>
-                        <div class="overflow-y-auto max-h-[34vh]">
+                        <div class="overflow-y-auto max-h-[26vh] md:max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-indo-sell" class="text-white/60"></tbody>
                             </table>
@@ -306,7 +344,7 @@
                 <div class="flex-grow p-1 flex flex-col gap-2 min-h-0">
                     <div class="border border-white/5 flex-1 min-h-0">
                         <div class="bg-white/5 text-base px-2 py-1 font-bold text-neon-green">P2P BUY</div>
-                        <div class="overflow-y-auto max-h-[34vh]">
+                        <div class="overflow-y-auto max-h-[26vh] md:max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-saudi-buy" class="text-white/60"></tbody>
                             </table>
@@ -314,7 +352,7 @@
                     </div>
                     <div class="border border-white/5 flex-1 min-h-0">
                         <div class="bg-white/5 text-base px-2 py-1 font-bold text-cyber-blue">P2P SELL</div>
-                        <div class="overflow-y-auto max-h-[34vh]">
+                        <div class="overflow-y-auto max-h-[26vh] md:max-h-[34vh]">
                             <table class="w-full text-base">
                                 <tbody id="table-p2p-saudi-sell" class="text-white/60"></tbody>
                             </table>

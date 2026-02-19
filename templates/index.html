@@ -503,8 +503,15 @@
                 // Kurs Cards
                 setText('val-google-sar', fmt(d.google_sar));
                 setText('val-xe-sar', fmt(d.xe_sar));
-                setText('val-tko-raw', fmt(d.tko_raw));
-                setText('val-tko-net', `NET: Rp ${fmt(d.tko_net)}`);
+                const indoSellTop1 = (Array.isArray(d.p2p_indo_sell) && d.p2p_indo_sell.length > 0)
+                    ? Number(d.p2p_indo_sell[0].price || 0)
+                    : 0;
+                const feePct = Number(d.tko_fee_pct || 0.2222);
+                const feeFactor = 1 + (feePct / 100);
+                const cardBase = indoSellTop1 || Number(d.tko_raw || 0);
+                const cardNet = cardBase * feeFactor;
+                setText('val-tko-raw', fmt(cardBase));
+                setText('val-tko-net', `NET: Rp ${fmt(cardNet)}`);
 
                 // Margin indicator
                 if (d.google_sar && d.tko_net) {
@@ -531,18 +538,17 @@
                 renderP2PTable(d.p2p_saudi_buy, 'table-p2p-saudi-buy', true, 'text-neon-green');
                 renderP2PTable(d.p2p_saudi_sell, 'table-p2p-saudi-sell', true, 'text-warning-gold');
 
-                // Profit Simulation Table (Auto from P2P SELL Saudi top #1-#2)
+                // Profit Simulation Table (Auto from P2P SELL Saudi top #1)
                 const saudiSell = Array.isArray(d.p2p_saudi_sell) ? d.p2p_saudi_sell : [];
                 const sellTop1 = saudiSell[0]?.price ? Number(saudiSell[0].price) : 0;
-                const sellTop2 = saudiSell[1]?.price ? Number(saudiSell[1].price) : 0;
-                const rateX = (sellTop1 && sellTop2) ? ((sellTop1 + sellTop2) / 2) : (sellTop1 || sellTop2 || 3.78);
+                const rateX = sellTop1 || 3.78;
                 const rateInput = document.getElementById('sim-rate-x');
                 if (rateInput) rateInput.value = rateX.toFixed(2);
                 let hP = '';
                 [20000, 50000, 100000, 200000, 500000].forEach(val => {
                     // Logic:
                     // 1. Terima dari Buyer (IDR) = Modal SAR * Google Rate
-                    // 2. Biaya Beli USDT (IDR) = (Modal SAR / P2P SELL Saudi top #1-#2) * TokoNet
+                    // 2. Biaya Beli USDT (IDR) = (Modal SAR / P2P SELL Saudi top #1) * TokoNet
                     // Profit = Terima - Biaya
                     
                     const terimaIDR = val * d.google_sar;

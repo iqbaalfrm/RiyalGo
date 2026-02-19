@@ -217,10 +217,23 @@
                 </div>
             </div>
 
+            <!-- P2P Net Cost Card -->
+            <div class="bg-white/5 border p-3 flex flex-col relative h-fit w-full gap-1.5">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-cyber-blue font-bold uppercase tracking-normal leading-tight text-sm">P2P NET COST
+                    </h3>
+                    <span class="bg-cyber-blue/20 text-cyber-blue text-xs px-1 font-bold">TOP #1 SELL</span>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <p id="val-p2p-raw" class="text-[1.95rem] sm:text-[2.05rem] font-extrabold text-white tabular-nums leading-none">0.00</p>
+                    <span id="val-p2p-net" class="text-sm text-white/50">NET: Rp 0.00</span>
+                </div>
+            </div>
+
             <!-- Kalkulator Arbitrase -->
-            <div class="bg-white/5 border p-4 flex flex-col relative h-fit w-full">
+            <div class="bg-white/5 border p-4 flex flex-col relative w-full flex-1">
                 <h3 class="text-warning-gold font-bold uppercase tracking-normal mb-2 text-base">TRADE CALCULATOR</h3>
-                <div class="space-y-2">
+                <div class="space-y-2 flex-1 flex flex-col justify-center">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div class="flex flex-col gap-0.5">
                             <label class="text-base text-white/40 uppercase">Volume SAR</label>
@@ -238,34 +251,6 @@
                     <button onclick="runCalc()"
                         class="w-full bg-neon-green text-black font-bold text-sm sm:text-base py-2.5 mt-1 hover:bg-neon-green/80 transition-colors uppercase tracking-wide rounded-md">CALCULATE PROFIT</button>
                     <p id="calc-market-hint" class="text-[10px] text-white/35 uppercase tracking-wide leading-relaxed">Live input: waiting market data...</p>
-                </div>
-            </div>
-
-            <!-- Profit Simulation Table -->
-            <div class="bg-white/5 border border-white/10 flex flex-col w-full">
-                <div class="p-2 bg-white/5 border-b border-white/10">
-                    <h2 class="font-bold text-neon-green uppercase tracking-widest text-center text-base">PROFIT PROJECTION</h2>
-                </div>
-                <div class="p-2 border-b border-white/10 flex items-center justify-between bg-white/5">
-                    <label class="text-white/60 text-sm">BASE RATE (X):</label>
-                    <div class="flex items-center gap-1">
-                        <input id="sim-rate-x" type="number" step="0.01" value="3.78" readonly
-                            class="bg-black border border-white/20 text-white text-right w-20 px-2 py-0.5 focus:border-neon-green outline-none text-sm font-inconsolata font-bold"
-                            onchange="syncData()">
-                        <span class="text-white/40 text-xs">SAR/USDT</span>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-base border-collapse">
-                        <thead>
-                            <tr class="bg-white/10 text-white/40 uppercase font-bold text-base">
-                                <th class="p-1 md:p-2 text-left">Notional (SAR)</th>
-                                <th class="p-1 md:p-2 text-right">Net Profit (IDR)</th>
-                                <th class="p-1 md:p-2 text-right">Net ROI (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-profit-sim" class="text-white/60"></tbody>
-                    </table>
                 </div>
             </div>
         </section>
@@ -508,10 +493,12 @@
                     : 0;
                 const feePct = Number(d.tko_fee_pct || 0.2222);
                 const feeFactor = 1 + (feePct / 100);
-                const cardBase = indoSellTop1 || Number(d.tko_raw || 0);
-                const cardNet = cardBase * feeFactor;
-                setText('val-tko-raw', fmt(cardBase));
-                setText('val-tko-net', `NET: Rp ${fmt(cardNet)}`);
+                setText('val-tko-raw', fmt(d.tko_raw));
+                setText('val-tko-net', `NET: Rp ${fmt(d.tko_net)}`);
+                const p2pBase = indoSellTop1;
+                const p2pNet = p2pBase * feeFactor;
+                setText('val-p2p-raw', fmt(p2pBase));
+                setText('val-p2p-net', `NET: Rp ${fmt(p2pNet)}`);
 
                 // Margin indicator
                 if (d.google_sar && d.tko_net) {
@@ -537,37 +524,6 @@
                 renderP2PTable(d.p2p_indo_sell, 'table-p2p-indo-sell', false, 'text-neon-green');
                 renderP2PTable(d.p2p_saudi_buy, 'table-p2p-saudi-buy', true, 'text-neon-green');
                 renderP2PTable(d.p2p_saudi_sell, 'table-p2p-saudi-sell', true, 'text-warning-gold');
-
-                // Profit Simulation Table (Auto from P2P SELL Saudi top #1)
-                const saudiSell = Array.isArray(d.p2p_saudi_sell) ? d.p2p_saudi_sell : [];
-                const sellTop1 = saudiSell[0]?.price ? Number(saudiSell[0].price) : 0;
-                const rateX = sellTop1 || 3.78;
-                const rateInput = document.getElementById('sim-rate-x');
-                if (rateInput) rateInput.value = rateX.toFixed(2);
-                let hP = '';
-                [20000, 50000, 100000, 200000, 500000].forEach(val => {
-                    // Logic:
-                    // 1. Terima dari Buyer (IDR) = Modal SAR * Google Rate
-                    // 2. Biaya Beli USDT (IDR) = (Modal SAR / P2P SELL Saudi top #1) * TokoNet
-                    // Profit = Terima - Biaya
-                    
-                    const terimaIDR = val * d.google_sar;
-                    const butuhUSDT = val / rateX;
-                    const biayaIDR = butuhUSDT * (d.tko_net || d.tko_raw); // Fallback to raw if net undefined
-                    
-                    const profit = terimaIDR - biayaIDR;
-                    const roi = (profit / biayaIDR) * 100;
-                    
-                    const color = profit >= 0 ? 'text-neon-green' : 'text-red-500';
-                    
-                    hP += `<tr class="zebra-row border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td class="p-2 font-mono text-white">${Number(val).toLocaleString('id-ID')}</td>
-                      <td class="p-2 text-right font-bold ${color}">Rp ${Number(profit).toLocaleString('id-ID', {maximumFractionDigits: 0})}</td>
-                      <td class="p-2 text-right font-bold ${color}">${roi.toFixed(2)}%</td>
-                    </tr>`;
-                });
-                const profitBody = document.getElementById('table-profit-sim');
-                if (profitBody) profitBody.innerHTML = hP;
 
                 // Divider Simulation
                 const matrixRows = (d.sim_div || []);

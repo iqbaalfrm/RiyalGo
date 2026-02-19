@@ -30,29 +30,36 @@ def _fetch_p2p(fiat, trade_type):
         "fiat": fiat,
         "merchantCheck": True,
         "page": 1,
-        "rows": 30,
+        "rows": 10,
         "tradeType": trade_type,
     }
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.post(url, json=payload, headers=headers, timeout=10).json()
-        data = res.get("data", [])
+        data = res.get("data") or []
         result = []
         for x in data:
-            adv = x.get("adv", {})
-            max_limit = _to_float(adv.get("dynamicMaxSingleTransAmount")) or _to_float(adv.get("maxSingleTransAmount"))
+            adv = x.get("adv") or {}
+            advertiser = x.get("advertiser") or {}
+            max_limit = _to_float(adv.get("maxSingleTransAmount"))
 
             # User request: for IDR tables, show only sellers with max limit above 50 juta.
             if fiat == "IDR" and max_limit <= MIN_IDR_P2P_LIMIT:
                 continue
 
+            price = _to_float(adv.get("price"))
+            if price <= 0:
+                continue
+
+            publisher = advertiser.get("userNo") or advertiser.get("advertiserNo") or ""
+            p2p_url = f"https://p2p.binance.com/en/trade/{trade_type.lower()}/USDT?fiat={fiat}&payment=ALL"
+            if publisher:
+                p2p_url += f"&publisher={publisher}"
+
             result.append({
-                "name": x.get("advertiser", {}).get("nickName", "")[:12],
-                "price": _to_float(adv.get("price")),
-                "url": (
-                    f"https://p2p.binance.com/en/trade/{trade_type.lower()}/USDT"
-                    f"?fiat={fiat}&payment=ALL&publisher={x.get('advertiser', {}).get('userNo', '')}"
-                ),
+                "name": str(advertiser.get("nickName") or "Seller")[:12],
+                "price": price,
+                "url": p2p_url,
             })
             if len(result) >= 10:
                 break

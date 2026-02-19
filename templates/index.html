@@ -264,7 +264,6 @@
                 </div>
                 <div class="flex items-baseline justify-between">
                     <p id="val-p2p-raw" class="text-[1.95rem] sm:text-[2.05rem] font-extrabold text-white tabular-nums leading-none">0.00</p>
-                    <span id="val-p2p-net" class="text-sm text-white/50">NET: Rp 0.00</span>
                 </div>
             </div>
 
@@ -529,14 +528,10 @@
                 const indoSellTop1 = (Array.isArray(d.p2p_indo_sell) && d.p2p_indo_sell.length > 0)
                     ? Number(d.p2p_indo_sell[0].price || 0)
                     : 0;
-                const feePct = Number(d.tko_fee_pct || 0.2222);
-                const feeFactor = 1 + (feePct / 100);
                 setText('val-tko-raw', fmt(d.tko_raw));
                 setText('val-tko-net', `NET: Rp ${fmt(d.tko_net)}`);
                 const p2pBase = indoSellTop1;
-                const p2pNet = p2pBase * feeFactor;
                 setText('val-p2p-raw', fmt(p2pBase));
-                setText('val-p2p-net', `NET: Rp ${fmt(p2pNet)}`);
 
                 // Margin indicator
                 if (d.google_sar && d.tko_net) {

@@ -249,7 +249,7 @@
                 <div class="p-2 border-b border-white/10 flex items-center justify-between bg-white/5">
                     <label class="text-white/60 text-sm">BASE RATE (X):</label>
                     <div class="flex items-center gap-1">
-                        <input id="sim-rate-x" type="number" step="0.01" value="3.78"
+                        <input id="sim-rate-x" type="number" step="0.01" value="3.78" readonly
                             class="bg-black border border-white/20 text-white text-right w-20 px-2 py-0.5 focus:border-neon-green outline-none text-sm font-inconsolata font-bold"
                             onchange="syncData()">
                         <span class="text-white/40 text-xs">SAR/USDT</span>
@@ -531,13 +531,18 @@
                 renderP2PTable(d.p2p_saudi_buy, 'table-p2p-saudi-buy', true, 'text-neon-green');
                 renderP2PTable(d.p2p_saudi_sell, 'table-p2p-saudi-sell', true, 'text-warning-gold');
 
-                // Profit Simulation Table (Local Calc)
-                const rateX = parseFloat(document.getElementById('sim-rate-x').value) || 3.78;
+                // Profit Simulation Table (Auto from P2P SELL Saudi top #1-#2)
+                const saudiSell = Array.isArray(d.p2p_saudi_sell) ? d.p2p_saudi_sell : [];
+                const sellTop1 = saudiSell[0]?.price ? Number(saudiSell[0].price) : 0;
+                const sellTop2 = saudiSell[1]?.price ? Number(saudiSell[1].price) : 0;
+                const rateX = (sellTop1 && sellTop2) ? ((sellTop1 + sellTop2) / 2) : (sellTop1 || sellTop2 || 3.78);
+                const rateInput = document.getElementById('sim-rate-x');
+                if (rateInput) rateInput.value = rateX.toFixed(2);
                 let hP = '';
                 [20000, 50000, 100000, 200000, 500000].forEach(val => {
                     // Logic:
                     // 1. Terima dari Buyer (IDR) = Modal SAR * Google Rate
-                    // 2. Biaya Beli USDT (IDR) = (Modal SAR / Rate X) * TokoNet
+                    // 2. Biaya Beli USDT (IDR) = (Modal SAR / P2P SELL Saudi top #1-#2) * TokoNet
                     // Profit = Terima - Biaya
                     
                     const terimaIDR = val * d.google_sar;

@@ -98,6 +98,19 @@ def _fetch_pintu():
         return 0.0
 
 
+def _fetch_osl():
+    """Fetch USDT/IDR spot price from OSL (Koinsayang API)."""
+    try:
+        res = requests.get(
+            "https://api.koinsayang.com/api/spot/v1/market/ticker?symbol=USDTIDR_SPBL",
+            timeout=10,
+        ).json()
+        data = res.get("data") or {}
+        return _to_float(data.get("close")) or _to_float(data.get("buyOne")) or _to_float(data.get("sellOne"))
+    except Exception:
+        return 0.0
+
+
 def get_market_engine():
     # 1. Kurs Real-time (Google / ExchangeRate API)
     sar_res = _safe_get_json("https://api.exchangerate-api.com/v4/latest/SAR")
@@ -106,22 +119,15 @@ def get_market_engine():
     # 1b. Kurs XE.com (alternative source)
     xe_sar = _fetch_xe_sar()
 
-    # 2. TokoCrypto / Binance spot (with fallback)
-    tko_res = _safe_get_json("https://api.binance.me/api/v3/ticker/price?symbol=USDTIDR")
-    tko_raw = float(tko_res.get("price", 0.0))
+    # 2. OSL spot (legacy `tko_*` fields retained for frontend compatibility)
+    osl_raw = _fetch_osl()
+    tko_raw = osl_raw
 
-    # Fallback: if Binance.me blocked, try Binance global USDT price via IDR conversion
-    if not tko_raw:
-        try:
-            # Use Binance global BUSD/USDT or alternative
-            binance_global = _safe_get_json("https://api.binance.com/api/v3/ticker/price?symbol=USDTBIDR")
-            tko_raw = float(binance_global.get("price", 0.0))
-        except Exception:
-            pass
-
-    # Fallback 2: use Indodax price if still 0
+    # Fallbacks if OSL API is unavailable
     if not tko_raw:
         tko_raw = _fetch_indodax()
+    if not tko_raw:
+        tko_raw = _fetch_pintu()
 
     # 2b. INDODAX spot
     indodax_raw = _fetch_indodax()
@@ -129,16 +135,17 @@ def get_market_engine():
     # 2c. PINTU spot
     pintu_raw = _fetch_pintu()
 
-    # 2d. OSL — gunakan TokoCrypto sebagai estimasi (tidak ada public API gratis)
-    osl_raw = tko_raw
+    # 2d. OSL raw field (filled from OSL API or mirrored fallback source)
+    if not osl_raw:
+        osl_raw = tko_raw
 
-    # 3. Pajak Tokocrypto 0.2222%
+    # 3. Fee 0.2222% (applied to net buy cost)
     tko_fee_pct = 0.2222
     fee_factor = 1 + tko_fee_pct / 100
     tko_net = tko_raw * fee_factor if tko_raw else 0.0
 
     # 4. Simulasi cek harga sesuai rumus user:
-    #    (Kurs Google - 5..15) / Kurs SAR 3.78..3.82 + fee Tokocrypto
+    #    (Kurs Google - 5..15) / Kurs SAR 3.78..3.82 + fee OSL
     divs = [3.78, 3.79, 3.8, 3.81, 3.82]
     cuts = [5, 10, 15]
     sim_div = []
@@ -209,3 +216,4 @@ def api_data():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+

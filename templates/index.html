@@ -242,10 +242,10 @@
                 </div>
             </div>
 
-            <!-- TokoCrypto Card -->
+            <!-- OSL Card -->
             <div class="bg-white/5 border p-3 flex flex-col relative h-fit w-full gap-1.5">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-warning-gold font-bold uppercase tracking-normal leading-tight text-sm">TOKOCRYPTO NET COST
+                    <h3 class="text-warning-gold font-bold uppercase tracking-normal leading-tight text-sm">OSL NET COST
                     </h3>
                     <span class="bg-warning-gold/20 text-warning-gold text-xs px-1 font-bold">FEE 0.2222%</span>
                 </div>
@@ -299,7 +299,7 @@
                 <div class="p-2 bg-white/5 border-b border-white/10">
                     <h2 class="font-bold text-cyber-blue uppercase tracking-widest text-center">INDONESIA P2P MARKET (IDR)</h2>
                     <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 mt-2 pt-2 border-t border-white/10 text-sm whitespace-nowrap">
-                        <div><span class="text-white/40">TKC:</span> <span id="sub-toko"
+                        <div><span class="text-white/40">OSL NET:</span> <span id="sub-toko"
                                 class="text-white">--</span>
                         </div>
                         <div><span class="text-white/40">IDX:</span> <span id="sub-indodax"
@@ -375,7 +375,7 @@
                 <div id="sim-divider" class="p-2 space-y-1 overflow-y-auto max-h-[42vh]"></div>
                 <div class="p-2 bg-white/5">
                     <p class="text-[10px] text-white/30 leading-tight italic">
-                        *Formula: (Google - 5/10/15) / SAR rate (3.78-3.82), then plus Tokocrypto fee.
+                        *Formula: (Google - 5/10/15) / SAR rate (3.78-3.82), then plus OSL fee.
                     </p>
                 </div>
             </div>
@@ -394,7 +394,7 @@
                         <span id="snap-xe" class="text-white font-semibold">--</span>
                     </div>
                     <div class="flex items-center justify-between border-b border-white/10 pb-1">
-                        <span class="text-white/50">TKO Net</span>
+                        <span class="text-white/50">OSL Net</span>
                         <span id="snap-tko-net" class="text-white font-semibold">--</span>
                     </div>
                     <div class="flex items-center justify-between border-b border-white/10 pb-1">
@@ -540,7 +540,7 @@
                 }
 
                 // Sub-header exchange values
-                setText('sub-toko', fmt(d.tko_raw, 0));
+                setText('sub-toko', d.tko_net ? fmt(d.tko_net, 0) : '--');
                 setText('sub-indodax', d.indodax_raw ? fmt(d.indodax_raw, 0) : '--');
                 setText('sub-pintu', d.pintu_raw ? fmt(d.pintu_raw, 0) : '--');
                 setText('sub-osl', d.osl_raw ? fmt(d.osl_raw, 0) : '--');
@@ -620,10 +620,10 @@
                 const p2pTop = d.p2p_saudi_buy && d.p2p_saudi_buy.length ? d.p2p_saudi_buy[0].price.toFixed(2) : '--';
                 const tkoTop = d.tko_net ? Math.round(d.tko_net).toLocaleString('id-ID') : (d.tko_raw ? Math.round(d.tko_raw).toLocaleString('id-ID') : '--');
                 const hintEl = document.getElementById('calc-market-hint');
-                if (hintEl) hintEl.textContent = `Live input: SAR P2P ${p2pTop} | TKO NET ${tkoTop}`;
+                if (hintEl) hintEl.textContent = `Live input: SAR P2P ${p2pTop} | OSL NET ${tkoTop}`;
 
                 addLog(`Google benchmark synced... <span class="text-neon-green">OK (SAR/IDR: ${fmt(d.google_sar)})</span>`);
-                addLog(`Tokocrypto spot synced... <span class="text-neon-green">${fmt(d.tko_raw)} IDR</span>`);
+                addLog(`OSL spot synced... <span class="text-neon-green">${fmt(d.tko_raw)} IDR</span>`);
                 addLog(`Pricing matrix recalculated (Google-5..15 / 3.78..3.82 + fee)...`);
                 addLog(`P2P market scan active (IDR &amp; SAR)...`);
                 addLog(`<span class="text-neon-green">SYNC COMPLETE</span> — Latency: ${latency}ms`);
@@ -668,7 +668,7 @@
             // 2. USDT yang dibutuhkan (SAR / rate P2P Saudi)
             const usdtNeeded = sarAmount / rateP2P;
 
-            // 3. Modal beli USDT di Tokocrypto (pakai harga NET, fee sudah masuk)
+            // 3. Modal beli USDT di OSL (pakai harga NET, fee sudah masuk)
             const modalIdr = usdtNeeded * rateTokoNet;
 
             // 4. Profit & ROI

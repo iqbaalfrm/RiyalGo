@@ -98,6 +98,19 @@ def _fetch_pintu():
         return 0.0
 
 
+def _fetch_osl_api():
+    """Fetch USDT/IDR spot price from OSL (Koinsayang API)."""
+    try:
+        res = requests.get(
+            "https://api.koinsayang.com/api/spot/v1/market/ticker?symbol=USDTIDR_SPBL",
+            timeout=10,
+        ).json()
+        data = res.get("data") or {}
+        return _to_float(data.get("close")) or _to_float(data.get("buyOne")) or _to_float(data.get("sellOne"))
+    except Exception:
+        return 0.0
+
+
 def _fetch_tokocrypto_scrape():
     """Fetch USDT/IDR price from Tokocrypto public depth endpoint (best ask/bid)."""
     try:
@@ -131,11 +144,14 @@ def get_market_engine():
     # 1b. Kurs XE.com (alternative source)
     xe_sar = _fetch_xe_sar()
 
-    # 2. "OSL" display source uses Tokocrypto scraped price (legacy `tko_*` fields retained)
-    osl_raw = _fetch_tokocrypto_scrape()
-    tko_raw = osl_raw
+    # 2. Tokocrypto source (legacy `tko_*` fields retained)
+    tko_raw = _fetch_tokocrypto_scrape()
+    # 2a. OSL source
+    osl_raw = _fetch_osl_api()
 
     # Fallbacks if Tokocrypto source is unavailable
+    if not tko_raw:
+        tko_raw = osl_raw
     if not tko_raw:
         tko_raw = _fetch_indodax()
     if not tko_raw:

@@ -168,9 +168,12 @@ def get_market_engine():
         osl_raw = tko_raw
 
     # 3. Fee 0.2222% (applied to net buy cost)
-    tko_fee_pct = 0.2222
-    fee_factor = 1 + tko_fee_pct / 100
-    tko_net = tko_raw * fee_factor if tko_raw else 0.0
+    osl_fee_pct = 0.2222
+    fee_factor = 1 + osl_fee_pct / 100
+    osl_net = osl_raw * fee_factor if osl_raw else 0.0
+    # Keep legacy tko_* payload keys for compatibility.
+    tko_fee_pct = osl_fee_pct
+    tko_net = osl_net
 
     # 4. Simulasi cek harga sesuai rumus user:
     #    (Kurs Google - 5..15) / Kurs SAR 3.78..3.82 + fee OSL
@@ -191,7 +194,7 @@ def get_market_engine():
                 })
 
     # 5. Simulasi Profit Modal (Divider Acuan 3.79)
-    base = (tko_net / 3.79) if tko_net else 0.0
+    base = (osl_net / 3.79) if osl_net else 0.0
     untung_per_sar = google_sar - base if google_sar and base else 0.0
     modals = [20000, 50000, 100000, 200000, 500000]
     profit_sim = []
@@ -219,6 +222,8 @@ def get_market_engine():
         "tko_raw": tko_raw,
         "tko_net": tko_net,
         "tko_fee_pct": tko_fee_pct,
+        "osl_net": osl_net,
+        "osl_fee_pct": osl_fee_pct,
         "indodax_raw": indodax_raw,
         "pintu_raw": pintu_raw,
         "osl_raw": osl_raw,
